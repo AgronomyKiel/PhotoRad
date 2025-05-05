@@ -3,7 +3,7 @@ pkgdown: 2.1.2
 pkgdown_sha: ~
 articles:
   PhotosynthesisLight: PhotosynthesisLight.html
-last_built: 2025-05-05T15:15Z
+last_built: 2025-05-05T16:05Z
 urls:
   reference: https://agronomykiel.github.io/PhotoRad/reference
   article: https://agronomykiel.github.io/PhotoRad/articles

@@ -189,7 +189,14 @@ knitr::include_graphics(("RectHyperbolaPhotosynthesis.png"))
 
 The light saturated maximum photosynthesis rate P~max~ is given if only CO~2~ diffusion into the leaf mesophyll or the leaf chloroplast is limiting photosynthesis. It may be therefore be decoupled into the leaf conductance for CO~2~, g~s~ and the concentration difference between the air outside the leaves and the leaf interior:
 
-$$P_{max}=g_s\Delta CO_2$$ This lead to the following equation: $$P_{n}^{{}}=\frac{\alpha \,I\,{{g}_{s}}\Delta C}{\alpha \,I+{{g}_{s}}\,\Delta C}-R_d $$
+$$P_{max}=g_s\Delta CO_2$$ {#eq-Pmax}
+
+where $\Delta CO_2$ is the difference between the ambient CO~2~ concentration and the CO~2~ concentration in the leaf interior. The equation can be rewritten to give a more general form of the rectangular hyperbola:
+This lead to the following equation: 
+
+$$P_{n}^{{}}=\frac{\alpha \,I\,{{g}_{s}}\Delta C}{\alpha \,I+{{g}_{s}}\,\Delta C}-R_d $$ {#eq-rectangular_gs}
+
+where $\Delta C$ is the difference between the ambient CO~2~ concentration and the CO~2~ concentration in the leaf interior. This equation can be used to describe the light response of photosynthesis in a more general way. It can be used to describe the effect of changing $CO_2$-concentrations on photosynthesis. The equation can be rewritten to give a more general form of the rectangular hyperbola:
 
 which can be used to describe effects of changing $CO_2$-concentrations on photosynthesis is a very simple manner.
 
@@ -197,9 +204,11 @@ which can be used to describe effects of changing $CO_2$-concentrations on photo
 
 More flexible than the rectangular hyperbola is the non-rectangular hyperbola, which includes an additional parameter $\Theta$ giving more flexibility in smoothing measured data:
 
-$${{P}^{2}}\Theta -P(\alpha I +{{P}_{\max }})+\alpha I {{P}_{\max }}=0$$ This quadratic equation has two solutions from which only the second with a negative sign before the square root is physiological meaningful:
+$${{P}^{2}}\Theta -P(\alpha I +{{P}_{\max }})+\alpha I {{P}_{\max }}=0$$ {#eq-nonrectangular}
 
-$${{P}_{1,2}}=\frac{(\alpha I +{{P}_{\max }})\pm \sqrt{{{(\alpha I +{{P}_{\max }})}^{2}}-4\Theta \alpha I {{P}_{\max }}}}{2\Theta }$$
+This quadratic equation has two solutions from which only the second with a negative sign before the square root is physiological meaningful:
+
+$${{P}_{1,2}}=\frac{(\alpha I +{{P}_{\max }})\pm \sqrt{{{(\alpha I +{{P}_{\max }})}^{2}}-4\Theta \alpha I {{P}_{\max }}}}{2\Theta }$$ {#eq-nonrectangular2}
 
 ```{r echo=F}
 #| label: fig-NonRectHyperbola
@@ -213,7 +222,7 @@ plot.model(model="NonRectHypR", ReadData = F, alpha = 0.05)
 
 Another option to describe the light response of single leaves is the negative exponential function:
 
-$$P_n=P_{max} \left( 1-e^{\frac {\alpha I}{P_{max}}} \right )$$
+$$P_n=P_{max} \left( 1-e^{\frac {\alpha I}{P_{max}}} \right )$$ {#eq-negativeexponential}
 
 ```{r echo=F, fig.align = 'center', out.width = "80%"}
 #| label: fig-NegativeExponential
@@ -233,66 +242,6 @@ In the following section data from an publication on photosynthesis measurements
 
 In order to fit the different response function we first define theme as R functions:
 
-```{r functiondefinition, echo=TRUE}
-# Blackman-response curve
-
-Blackman <- function(Pmax, alpha, I){
-  result <- ifelse(I*alpha>Pmax,Pmax,alpha*I)
-  return(result)  
-}
-
-# negative exponential curve
-NegExpoential<- function(Pmax, alpha, I){
-  result <- Pmax*(1-exp(-alpha*I))
-  return(result)  
-}
-
-#rectangular hyperbola
-RectHyp <- function(Pmax, alpha, I){
-  result <-alpha*Pmax*I/((alpha*I)+Pmax)
-  return(result)  
-}
-
-#rectangular hyperbola with dark respiration term
-RectHypR <- function(Pmax, alpha, r, I){
-  result <- alpha*Pmax*I/((alpha*I)+Pmax)-r
-  return(result)  
-}
-
-#non-rectangular hyperbola with dark respiration term and CO2 effect
-NonRectHyp <- function(alpha, pmax, theta, par){
-  assi <- alpha*par+pmax-sqrt((alpha*par+pmax)^2-4*theta*alpha*par*pmax)/(2*theta)
-  return(assi)
-}
-
-
-NonRectHypR <- function(alpha, pmax, theta, r, par){
-  assi <- alpha*par+pmax-sqrt((alpha*par+pmax)^2-4*theta*alpha*par*pmax)/(2*theta)-r
-  return(assi)
-}
-
-
-#rectangular hyperbola with dark respiration term integrated over the canopy
-# assumin Pmax to be constand over the leaf layers of the canopy
-RectHypInt <- function(LAI, Pmax, alpha, r, k, I) {
-  result <- Pmax/k*log((alpha*k*I+Pmax)/(alpha*k*I*exp(-k*LAI)+Pmax))-r
-  return(result)  
-}
-
-#rectangular hyperbola with dark respiration term and CO2 effect
-RectHyp_gs <- function(alpha, tau, r, par, co2){
-  assi <- alpha*par*tau*co2/(alpha*par+tau*co2)-r
-  return(assi)
-}
-
-#non-rectangular hyperbola with dark respiration term and CO2 effect
-NonRectHyp_gs <- function(alpha, tau, theta, r, par, co2){
-  assi <- alpha*par+tau*CO2-sqrt((alpha*par+tau*co2)^2-4*theta*alpha*par*tau*co2)/(2*theta)-r
-  return(assi)
-}
-
-
-```
 
 ## Default parameter definitions
 
@@ -525,7 +474,7 @@ lines(x = PARvalues, y = Yval_mod.RectHyp)
 
 islope <- 0.01*alpha
 
-mod.negExpo <-  nls(Pbrutto ~ NegExpoential(Pmax, alpha, PAR), data=dat, 
+mod.negExpo <-  nls(Pbrutto ~ NegExponential(Pmax, alpha, PAR), data=dat, 
                start = list(alpha=islope, Pmax=2*Pmax), nls.control(warnOnly=TRUE, minFactor = 1e-10) )
 
 # r2 is not well defined for non-linear models but a hand calculation is made here

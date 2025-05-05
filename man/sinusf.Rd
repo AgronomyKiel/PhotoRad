@@ -2,7 +2,7 @@
 % Please edit documentation in R/PhotoFunctions.R
 \name{sinusf}
 \alias{sinusf}
-\title{Utility function for transfer of a daily average to a 16 hour sinoidal function}
+\title{Utility function for transfer of a daily average to a 16 hour sinusoidal function}
 \usage{
 sinusf(hour = 12)
 }
@@ -13,5 +13,5 @@ sinusf(hour = 12)
 the actual value of the sinusoidal function for that hour
 }
 \description{
-Utility function for transfer of a daily average to a 16 hour sinoidal function
+Utility function for transfer of a daily average to a 16 hour sinusoidal function
 }

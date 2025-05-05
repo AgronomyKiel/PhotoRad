@@ -86,6 +86,23 @@ RectHypR <- function(Pmax, alpha, r, I){
 
 
 
+#' Non-rectangular hyperbola function for photosynthesis without respiration
+#'
+#' @param Pmax light saturated photosynthesis rate [µmol CO2 m^-2 s^-1]
+#' @param alpha quantum yield, initial slope [µmol CO2 µmol^-1 photons]
+#' @param theta curvature parameter [dimensionless]
+#' @param I photosynthetic photon flux density, PPFD [µmol photons m^-2 s^-1]
+#'
+#' @returns single leaf net photosynthesis rate [µmol CO2 m^-2 s^-1]
+#' @export
+NonRectHyp <- function(Pmax, alpha, theta, I){
+  result <- (alpha*I+Pmax-sqrt((alpha*I+Pmax)^2-4*theta*alpha*I*Pmax))/(2*theta)
+  return(result)
+}
+
+
+
+
 #' Non-rectangular hyperbola function for photosynthesis with respiration
 #'
 #' @param Pmax light saturated photosynthesis rate [µmol CO2 m^-2 s^-1]
@@ -174,7 +191,7 @@ RectHypIntPmaxdecR <- function(LAI, Pmax, alpha, r, k, I) {
 
 
 
-#' Utility function for transfer of a daily average to a 16 hour sinoidal function
+#' Utility function for transfer of a daily average to a 16 hour sinusoidal function
 #'
 #' @param hour hour of the day [0-24]
 #'
