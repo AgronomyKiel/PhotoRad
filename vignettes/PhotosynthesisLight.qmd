@@ -1,0 +1,589 @@
+---
+title: "PhotosynthesisLight"
+output: rmarkdown::html_vignette
+format: 
+  html:
+    toc: true
+    html-math-method: mathjax
+vignette: >
+  %\VignetteIndexEntry{PhotosynthesisLight}
+  %\VignetteEngine{quarto::html}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+```{r setup, include=FALSE}
+
+#rm(list = ls())      # Clear all variables
+knitr::opts_chunk$set(warning = FALSE)
+library(PhotoRad)
+library(purrr)
+library(kableExtra)
+library(dplyr)
+library(ggplot2)
+
+#source("plot.model.R")
+#source("PhotoFunctions.R")
+
+setplotbackground <-  function (plot){ 
+  #plot <- plot +  scale_colour_brewer(palette="Set1")
+  plot <- plot + theme(plot.background = element_rect(fill = NULL,colour = NA))
+  plot <- plot + theme(axis.line = element_line(size = 1, linetype = "solid", color="black"))
+  plot <- plot + theme(panel.border = element_rect(size=1.5, fill=NA, color="black"))
+  plot <- plot + theme(panel.background = element_blank())
+  plot <- plot + theme(plot.background = element_rect(fill = "transparent",colour = NA))
+  plot <- plot + theme(legend.background = element_blank())
+  plot <- plot + scale_fill_hue(l=45)
+  plot <- plot + scale_color_hue(l=45)
+}
+
+
+#source("PhotoFunctions.R")
+
+#' Title
+#'
+#' @param Pmax maximum photosynthesis rate
+#' @param alpha quantum yield
+#' @param r dark respiration rate
+#' @param theta curvature parameter
+#' @param model type of responce model
+#' @param ReadData logical, read data from file
+#' @param fn file name
+#'
+#' @returns ggplot object
+#' @export
+#'
+# @examples
+plot.model <- function(Pmax=20, alpha=0.08, r=3, theta=0.7, model="Rectangular", ReadData=T, fn="LightRespData.csv"){
+
+  if (ReadData==T) {
+    dat <- read.csv("LightRespData.csv", header = TRUE , sep = ";")
+    #dat$Plot
+    dat$Assi <- dat$Assi*3.1/2.5}
+
+  par <- seq(0, 2200, 50)
+  P <- rep(NA,length(par))
+  df <-data.frame(par, P)
+
+  switch (model,
+          Rectangular      = df$P <- RectHypR(Pmax = Pmax, alpha = alpha, r = r, I = df$par),
+          Blackman         = df$P    <- Blackmanr(Pmax = Pmax, alpha = alpha, r = r, I = df$par),
+          NegativeExponential = df$P <-NegExponentialr(Pmax = Pmax, alpha = alpha, I = df$par, r = r),
+          NonRectHypR      = df$P <- Vectorize(NonRectHypR)(Pmax = Pmax, alpha = alpha, r = r, theta = theta, I = df$par)
+  )
+
+
+  p <- ggplot()
+  p <- p + theme_light(base_size = 20)
+  p <- p + geom_line(data = df, mapping = aes(x=par, y = P),col="red", size=1.5)
+  if (ReadData==T) {
+    p <- p + geom_point(data = dat, mapping = aes(x=PAR, y = Assi),col="darkgrey", fill="green", shape=21, size=3)}
+  p <- p + xlab(expression(paste('PPFD (',mu, 'mol photons ',m^{-2},s^{-1},')')))
+  p <- p + ylab(expression(paste(A, ' (',mu,'mol ', CO[2], ' ',m^{-2}, s^{-1},")")))
+  #p <- p + ggtitle(paste('Latitude =',lat,'on', month.name[month],day))
+  if (ReadData==T) {
+    p <- p + scale_y_continuous(limits = c(1.2*min(dat$Assi),max(1.2*dat$Assi)))} else {
+      p <- p + scale_y_continuous(limits = c(-1.2*r,1.2*Pmax))
+    }
+  return(p)
+
+}
+
+#plot.model(Pmax = 20, alpha = 0.02, r = 3, theta = 0.7, model = "NonRectHypR")
+
+
+
+
+
+```
+
+# General equation form
+
+A general function for the gross photosynthesis rate per Unit Leaf Area as a function of light intensity can be written as:
+
+$${P_g}={P_{g,\max }}\cdot f\left( x \right)$$ {#eq-general}
+
+where P~g~ = Gross Photosynthesis rate P~g,max~ = light saturated photosynthesis rate=f(CO~2~, Temp., N, ..) f(x) = response function (0..1)
+
+If dark respiration R~d~ is added (substracted) on get's the net photosynthesis rate:
+
+$$P_n~={P_{g,\max }}\cdot f\left( x \right)-R_d$$ {#eq-general_resp}
+
+where P~n~ = Net Photosynthesis rate \[µmol CO~2~ m^-2^ s^-1^\] P~g~ = Gross Photosynthesis rate P~g,max~ = light saturated photosynthesis rate=f(CO~2~, Temp., N, ..) f(x) = response function (0..1) R~d~ = dark respiration rate \[µmol CO~2~ m^-2^ s^-1^\]
+
+# Blackman-Response-Curve
+
+The most simple response function thereby is the so called Blackman reponse curve. It is the most simple way to predict the co-limitation of photosynthesis by light energy at the one hand and CO~2~-diffusion into the leaves.
+
+$$\begin{align}
+  & P_n=\left( \begin{matrix}
+   \alpha I-R_d   \\
+   {{P}_{\max }-R_d}  \\
+\end{matrix}for\,\begin{matrix}
+   I\le {{I}_{crit}}  \\
+   I>{{I}_{crit}}  \\
+\end{matrix} \right. \\ 
+ &  \\ 
+ & {{I}_{crit}}={}^{{{P}_{\max }}}/{}_{\alpha };\,\,\,\,{{\left. \frac{dP}{dI} \right|}_{I<{{I}_{crit}}}}=\alpha  \\ 
+\end{align}$$ {#eq-Blackman}
+
+where
+
+I = photosynthetic photon flux density, PPFD (µmol photons m^-2.^ s^-1^) $alpha$ = quantum yield, initial slope (µmol CO~2~ µmol^-1^ photons) P~n~, (P~max~) = (light saturated) CO~2~-assimilation rate (µmol CO^2^ m^-2^ s^-1^)
+
+The parameters of the function are easily interpreted but this function form is seldom used for the description of gas exchange data as it describes real data sets not very well.
+
+```{r }
+#| label: fig-BlackmanCurve
+#| fig.cap: "Blackman-responce curve for photosynthesis as function of light intensity"
+#| fig.align: "center"
+#| out.width: "80%"
+#| echo: FALSE
+#| dpi: 300
+#| 
+
+
+plot.model(model="Blackman", ReadData = F, alpha = 0.025)
+
+```
+
+# Rectangular hyperbola
+
+A bit more realistic approach to describe the light response curve of single leaves is the so called rectangular hyperbola:
+
+$$P_n=\frac{\alpha I {{P}_{\max }}}{\alpha I +{{P}_{\max }}}-R_d$$ {#eq-rectangular}
+
+one should notice that the parameter alpha now describes the light use efficiency at the start of the curve (zero radiation):
+
+$${{\left. \frac{dP}{I} \right|}_{I=0}}=\alpha $$ {#eq-rectangular_slope}
+
+and therefore has a somewhat different meaning as in the Blackman-Response curve.
+
+```{r echo=F, fig.align='center', fig.cap="Rectangular photosynthesis curve", warning=FALSE, out.width="80%"}
+#| label: fig-RectangularCurve
+
+plot.model(model="Rectangular", ReadData = F, alpha = 0.2)
+
+```
+
+This equation is analogous to the well known Michaelis-Menten equation often used in enzyme kinetics. It sometimes fails to describe data sets perfectly as photosynthesis often is light saturated earlier than the smooth shape of this curve predicts. A main advantage of this curve is the possibility to integrate it analytically over entire canopy assuming either a constant or a declining value of P~max~. It can be combined with a respiration term (\@fig-RectHyperbolicPhotosynthesis, [@loomis1992])
+
+```{r}
+#| label: fig-RectHyperbolicPhotosynthesis
+#| dpi: 300
+#| fig-align: center
+#| fig-cap: A typical response curve of leaf net photosynthesis, (Pn) to irradiance (I) at ambient CO2 concentration. $R_d$ is dark respiration, $I_c$ light compensation point, $alpha$ radiation-use efficiency at low light, and Pn* photosynthesis rate at light saturation. From Loomis & Connor (1992)
+#| include: false
+#| out-width: 80%
+ 
+
+knitr::include_graphics(("RectHyperbolaPhotosynthesis.png"))
+```
+
+The light saturated maximum photosynthesis rate P~max~ is given if only CO~2~ diffusion into the leaf mesophyll or the leaf chloroplast is limiting photosynthesis. It may be therefore be decoupled into the leaf conductance for CO~2~, g~s~ and the concentration difference between the air outside the leaves and the leaf interior:
+
+$$P_{max}=g_s\Delta CO_2$$ This lead to the following equation: $$P_{n}^{{}}=\frac{\alpha \,I\,{{g}_{s}}\Delta C}{\alpha \,I+{{g}_{s}}\,\Delta C}-R_d $$
+
+which can be used to describe effects of changing $CO_2$-concentrations on photosynthesis is a very simple manner.
+
+# Non rectangular hyperbola
+
+More flexible than the rectangular hyperbola is the non-rectangular hyperbola, which includes an additional parameter $\Theta$ giving more flexibility in smoothing measured data:
+
+$${{P}^{2}}\Theta -P(\alpha I +{{P}_{\max }})+\alpha I {{P}_{\max }}=0$$ This quadratic equation has two solutions from which only the second with a negative sign before the square root is physiological meaningful:
+
+$${{P}_{1,2}}=\frac{(\alpha I +{{P}_{\max }})\pm \sqrt{{{(\alpha I +{{P}_{\max }})}^{2}}-4\Theta \alpha I {{P}_{\max }}}}{2\Theta }$$
+
+```{r echo=F}
+#| label: fig-NonRectHyperbola
+#| fig.cap: "Non-rectangular hyperbola"
+#| fig.align: "center"
+#| out.width: "80%"
+
+plot.model(model="NonRectHypR", ReadData = F, alpha = 0.05)
+
+```
+
+Another option to describe the light response of single leaves is the negative exponential function:
+
+$$P_n=P_{max} \left( 1-e^{\frac {\alpha I}{P_{max}}} \right )$$
+
+```{r echo=F, fig.align = 'center', out.width = "80%"}
+#| label: fig-NegativeExponential
+#| fig.cap: "Negative exponential function"
+
+plot.model(model="NonRectHypR", ReadData = F, alpha = 0.2)
+
+```
+
+This approach is similar to the non-rectangular hyperbola for values 0.7\<theta\<0.9. It is/has been use for instance in the well known SUCROS approach of modeling canopy photosynthesis.
+
+# Fitting curves to experimental data
+
+In the following section data from an publication on photosynthesis measurements on cauliflower () are used to show options for analysing the data with different empirical models of photosynthesis. Therefore R code is used and presented in this document.
+
+## Definition of R functions
+
+In order to fit the different response function we first define theme as R functions:
+
+```{r functiondefinition, echo=TRUE}
+# Blackman-response curve
+
+Blackman <- function(Pmax, alpha, I){
+  result <- ifelse(I*alpha>Pmax,Pmax,alpha*I)
+  return(result)  
+}
+
+# negative exponential curve
+NegExpoential<- function(Pmax, alpha, I){
+  result <- Pmax*(1-exp(-alpha*I))
+  return(result)  
+}
+
+#rectangular hyperbola
+RectHyp <- function(Pmax, alpha, I){
+  result <-alpha*Pmax*I/((alpha*I)+Pmax)
+  return(result)  
+}
+
+#rectangular hyperbola with dark respiration term
+RectHypR <- function(Pmax, alpha, r, I){
+  result <- alpha*Pmax*I/((alpha*I)+Pmax)-r
+  return(result)  
+}
+
+#non-rectangular hyperbola with dark respiration term and CO2 effect
+NonRectHyp <- function(alpha, pmax, theta, par){
+  assi <- alpha*par+pmax-sqrt((alpha*par+pmax)^2-4*theta*alpha*par*pmax)/(2*theta)
+  return(assi)
+}
+
+
+NonRectHypR <- function(alpha, pmax, theta, r, par){
+  assi <- alpha*par+pmax-sqrt((alpha*par+pmax)^2-4*theta*alpha*par*pmax)/(2*theta)-r
+  return(assi)
+}
+
+
+#rectangular hyperbola with dark respiration term integrated over the canopy
+# assumin Pmax to be constand over the leaf layers of the canopy
+RectHypInt <- function(LAI, Pmax, alpha, r, k, I) {
+  result <- Pmax/k*log((alpha*k*I+Pmax)/(alpha*k*I*exp(-k*LAI)+Pmax))-r
+  return(result)  
+}
+
+#rectangular hyperbola with dark respiration term and CO2 effect
+RectHyp_gs <- function(alpha, tau, r, par, co2){
+  assi <- alpha*par*tau*co2/(alpha*par+tau*co2)-r
+  return(assi)
+}
+
+#non-rectangular hyperbola with dark respiration term and CO2 effect
+NonRectHyp_gs <- function(alpha, tau, theta, r, par, co2){
+  assi <- alpha*par+tau*CO2-sqrt((alpha*par+tau*co2)^2-4*theta*alpha*par*tau*co2)/(2*theta)-r
+  return(assi)
+}
+
+
+```
+
+## Default parameter definitions
+
+For the use and fitting of the functions different parameters with their respective values have to be defined:
+
+```{r Definitions, echo=T}
+
+# Definition of a sequence of radiation intensities [µmol/cm2/s]
+I <- seq(0, 2000, 10)
+
+# Two versions of light saturated photosynthesis rate either in [µg*m-2*s-1] or [µmol*m2-*s-1]
+Pmax_g <- 1642 #  [µg*m-2*s-1]
+Pmax_m <- Pmax_g/(12+2*16) #[µmol*m2-*s-1]
+
+# Two versions of initial light use efficiency
+alpha_Jg <- 34.9 # [µg*J-1]
+alpha_mol_mol <-  alpha_Jg/4.57*1/44 # 0.06 more common
+
+# Values of dark respiraton rate
+r_g <- 135  #  [µg*m-2*s-1]
+## converstion to molar units using the respective molecular weights
+r_mol <- r_g/(12+2*16) #[µmol*m2-*s-1]
+
+```
+
+## Example plot
+
+Using the rectangular hyperbola and the parameter values defined a simple plot with base r can be produced:
+
+```{r}
+#| label: fig-RectHypExample
+Pbrutto <- RectHyp(Pmax_m, alpha_mol_mol, I)
+plot(I,Pbrutto)
+
+```
+
+## Data
+
+The data are read in csv-format and we use alternatively units of mol and g within the following sections as the publication of [@kage2001] uses weight units and radiation intensity in W^.^m^-2^ as it typical for many crop growth models. Alternatively, molar units for radiation (µmol Photons^.^cm^-2.^s^-1^) and CO2-exchange (µmol CO~2~^.^cm^-2^.s^-1^) are most often used in crop physiology publications.
+
+```{r}
+#### read in data ###########
+# read data from Kage & Stützel ()
+dat <- read.csv("Cauliflower_Photo_HH_1995_06_01.csv", header = TRUE , sep = ";")
+
+# correct for chamber size
+dat$Assi = dat$Assi*3.1/2.5
+# convert assimilation rate into units of g CO2
+dat$assi_g = dat$Assi*44
+dat$par_w = dat$PAR/4.55
+
+```
+
+The data set consists of the columns: `r names(dat)`. The units for the numerical columns are:
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+Parameters <- c( "CO2",     "DiffCO2", "PAR",     "Assi",    "IntCO2",  "assi_g",  "par_w")
+Units <- c("[ppm]", "[ppm]", "[µmol Photons.cm-2.s-1]", "[µmol CO2.cm-2.s-1]", "[ppm]",
+           "[µg CO2.cm-2.s-1]", "[W.cm-2]")
+
+tmp <-  dat %>% 
+  dplyr::select(Parameters)
+tmp <- as.data.frame(apply(tmp,2,summary))
+#tmp <- tmp %>% tidyr::pivot_wider()
+minval <- unname(unlist(as.vector(tmp[1,])))
+maxval <- unname(unlist(as.vector(tmp[6,])))
+
+df.def <- data.frame(Parameters, Units=Units, min=minval, max=maxval)
+
+num_digits <- 3
+
+# Format numeric columns using dplyr
+df.def <- df.def %>%
+  mutate(across(where(is.numeric), ~ signif(.x, digits = num_digits)))
+```
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#| label: tab-parameter-definitions
+knitr::kable(df.def)
+
+```
+
+This means that the columns assi_g and par_w are giving the assimilation rate and the radiation intensity in units of weight and energy.
+
+```{r message=FALSE, warning=FALSE}
+library(dplyr)
+
+# Define the number of significant digits
+num_digits <- 3
+
+# Format numeric columns using dplyr
+df <- dat %>%
+  mutate(across(where(is.numeric), ~ signif(.x, digits = num_digits)))
+```
+
+
+```{r message=FALSE, warning=FALSE}
+#| label: tab-photosynthesis-data
+#| fig.cap: "Photosynthesis data from Kage & Stützel (2001)"
+# make nice table using kable 
+knitr::kable(head(df))
+
+```
+
+From this data set we filter out the observations using recent level of CO~2~ concentration at approximately 400 ppm and make a simple plot using base R.
+
+```{r}
+# select the rows with approx 400 ppm CO2
+dat400 <- dat[48:55,]
+
+# add the value of dark respiration at zeor irradtiation to obtain gross assimilation
+dat400$Pbrutto <- dat400$Assi-min(dat400$Assi)
+```
+
+
+```{r}
+#| label: fig-ExampleData
+#### simple scatter plot
+plot(x = dat400$PAR, y = dat400$Pbrutto)
+```
+
+## Fitting different response functions
+
+We can now fit different response curves to the data of measured gross photosynthesis at different radiation intensities and the selected CO~2~ concentration of around 400 ppm. For this purpose we use the R function nls which is able to fit non-linear functions to data using different search algorithms. It is crucial for this process, that realistic start values are given to the function.
+
+### Fitting the Blackman curve
+
+```{r}
+######## fitting Blackman curve #########
+
+# estimates for initial parameter values
+dat_save <- dat
+dat <- dat400
+
+# estimation of start values for the parameters Pmax and alpha
+## start with a value slightly below maximum
+iPmax <- 0.9*max(dat$Pbrutto)
+
+## derive the slope by selecting the first radiation intensity higher than zero
+islope <- dat[dat$PAR==180, "Pbrutto"]/180
+
+# fitting the Blackman function to experimental data using nls
+mod.Blackman <-  nls(Pbrutto ~ Blackman(Pmax, alpha, PAR), data=dat, 
+               start = list(alpha=islope, Pmax=iPmax), nls.control(warnOnly=TRUE))
+
+# r2 is not well defined for non-linear models but a hand calculation is made here
+RSS <- sum(residuals(mod.Blackman)^2)  # Residual sum of squares
+TSS <- sum((dat$Pbrutto - mean(dat$Pbrutto))^2)  # Total sum of squares
+rsquared <- 1 - (RSS/TSS)
+summary(mod.Blackman)
+cat(paste("Rsquare: ", as.character(format(rsquared, digits = 3))))
+```
+
+The output of the model summary gives the parameter estimates and we added the calculated value of the "pseudo" r-square. The latter is quite high, but the next plot shows that the data are not to well described by the Blackman model.
+
+```{r}
+# retrieving the coefficients from the summary
+alpha <- summary(mod.Blackman)$coefficients[1]
+Pmax <-  summary(mod.Blackman)$coefficients[2]
+
+#calculation of the break point
+Iopt <- Pmax/alpha
+
+minPAR <- min(dat$PAR) #Minimum-PAR
+maxPAR <- max(dat$PAR) #Maximum-PAR
+
+# calculate two sequences of PAR-values 
+PARvalues1 <- seq(minPAR, Iopt, (Iopt-minPAR)/19)
+PARvalues2 <- seq(Iopt, maxPAR, Iopt/19)
+PARvalues <- c(PARvalues1, PARvalues2)
+
+# use the generic predict function to obtain estimates for the defined values of PAR
+Yval_mod.Blackman <-  predict(mod.Blackman, list(PAR=PARvalues))
+```
+
+
+```{r}
+#| label: fig-BlackmanFitting
+#| fig.cap: "Blackman response curve fit to the data"
+# use basic plot
+plot(x = dat$PAR, y = dat$Pbrutto)
+lines(x = PARvalues, y = Yval_mod.Blackman)
+```
+
+### Fitting Rectangular Hyperbola
+
+```{r}
+########## Fitting Rectangular Hyperbola ##################
+# use function nls to fit the values, important are realistic start values
+mod.RectHyp <-  nls(Pbrutto ~ RectHyp(Pmax, alpha, PAR), data=dat, 
+             start = list(alpha=islope, Pmax=iPmax), nls.control(warnOnly=TRUE, minFactor = 1e-10) )
+
+# r2 is not well defined for non-linear models but a hand calculation is made here
+RSS <- sum(residuals(mod.RectHyp)^2)  # Residual sum of squares
+TSS <- sum((dat$Pbrutto - mean(dat$Pbrutto))^2)  # Total sum of squares
+
+rsquared <- 1 - (RSS/TSS)
+summary(mod.RectHyp)
+cat(paste("rsquare: ", as.character(format(rsquared, digits = 3))))
+```
+
+```{r}
+#| label : RectHypFitting
+# retrieving the coefficients from the summary
+alpha <- summary(mod.RectHyp)$coefficients[1]
+Pmax <-  summary(mod.RectHyp)$coefficients[2]
+#calculation of the break point
+
+minPAR <- min(dat$PAR) #Minimum-PAR
+maxPAR <- max(dat$PAR) #Maximum-PAR
+
+#PARvalues <- seq(minPAR, maxPAR, (maxPAR-minPAR)/19)
+Yval_mod.RectHyp <-  predict(mod.RectHyp, list(PAR=PARvalues))
+```
+
+
+```{r}
+#| label: fig-RectHypFitting
+#| fig.cap: "Rectangular hyperbola fit to the data"
+plot(x = dat$PAR, y = dat$Pbrutto)
+lines(x = PARvalues, y = Yval_mod.RectHyp)
+```
+
+### Fitting negative exponential model
+
+```{r}
+
+######## negative exponential ##############
+
+islope <- 0.01*alpha
+
+mod.negExpo <-  nls(Pbrutto ~ NegExpoential(Pmax, alpha, PAR), data=dat, 
+               start = list(alpha=islope, Pmax=2*Pmax), nls.control(warnOnly=TRUE, minFactor = 1e-10) )
+
+# r2 is not well defined for non-linear models but a hand calculation is made here
+RSS <- sum(residuals(mod.negExpo)^2)  # Residual sum of squares
+TSS <- sum((dat$Pbrutto - mean(dat$Pbrutto))^2)  # Total sum of squares
+
+rsquared <- 1 - (RSS/TSS)
+summary(mod.negExpo)
+
+```
+
+
+
+### Fitting Non-Rectangular Hyperbola
+
+```{r}
+#| label: NonRectHypFitting
+########## Fitting Rectangular Hyperbola ##################
+# use function nls to fit the values, important are realistic start values
+mod.NonRectHyp <-  nls(Pbrutto ~ NonRectHyp(alpha, pmax, theta, PAR), data=dat, 
+             start = list(alpha=0.02, pmax=40, theta=0.8), nls.control(warnOnly=TRUE, minFactor = 1e-10) )
+
+# r2 is not well defined for non-linear models but a hand calculation is made here
+RSS <- sum(residuals(mod.NonRectHyp)^2)  # Residual sum of squares
+TSS <- sum((dat$Pbrutto - mean(dat$Pbrutto))^2)  # Total sum of squares
+
+rsquared <- 1 - (RSS/TSS)
+summary(mod.NonRectHyp)
+cat(paste("rsquare: ", as.character(format(rsquared, digits = 3))))
+```
+
+### Comparison of models
+
+The models
+
+```{r}
+#| label: fig-ModelComparison
+#| fig.cap: "Comparison of different models fitted to the data"
+
+
+# retrieving the coefficients from the summary
+alpha <- summary(mod.negExpo)$coefficients[1]
+Pmax <-  summary(mod.negExpo)$coefficients[2]
+#calculation of the break point
+
+
+minPAR <- min(dat$PAR) #Minimum-PAR
+maxPAR <- max(dat$PAR) #Maximum-PAR
+
+#PARvalues <- seq(minPAR, maxPAR, (maxPAR-minPAR)/19)
+Yval_mod.negExpo <-  predict(mod.negExpo, list(PAR=PARvalues))
+Yval_mod.NonRectHyp <-  predict(mod.NonRectHyp, list(PAR=PARvalues))
+
+plot(x = dat$PAR, y = dat$Pbrutto, xlab="PAR (µmol . cm-2. s-1)",
+     ylab="Assimilation (µmol cm-2.s-1)")
+lines(x = PARvalues, y = Yval_mod.Blackman, col="blue")
+lines(x = PARvalues, y = Yval_mod.RectHyp, col="red")
+lines(x = PARvalues, y = Yval_mod.NonRectHyp, col="pink", linewidth=2)
+lines(x = PARvalues, y = Yval_mod.negExpo, col="green")
+###########################################
+```

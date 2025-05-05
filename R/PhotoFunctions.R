@@ -190,5 +190,3 @@ sinusf <- function (hour=12)
 
 
 
-
-
