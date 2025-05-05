@@ -1,0 +1,1216 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>PhotosynthesisLight</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="PhotosynthesisLight_files/libs/clipboard/clipboard.min.js"></script>
+<script src="PhotosynthesisLight_files/libs/quarto-html/quarto.js" type="module"></script>
+<script src="PhotosynthesisLight_files/libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="PhotosynthesisLight_files/libs/quarto-html/popper.min.js"></script>
+<script src="PhotosynthesisLight_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="PhotosynthesisLight_files/libs/quarto-html/anchor.min.js"></script>
+<link href="PhotosynthesisLight_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="PhotosynthesisLight_files/libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="PhotosynthesisLight_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="PhotosynthesisLight_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="PhotosynthesisLight_files/libs/bootstrap/bootstrap-bb462d781dde1847d9e3ccf7736099dd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+</head>
+
+<body class="quarto-light">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#general-equation-form" id="toc-general-equation-form" class="nav-link active" data-scroll-target="#general-equation-form">General equation form</a></li>
+  <li><a href="#blackman-response-curve" id="toc-blackman-response-curve" class="nav-link" data-scroll-target="#blackman-response-curve">Blackman-Response-Curve</a></li>
+  <li><a href="#rectangular-hyperbola" id="toc-rectangular-hyperbola" class="nav-link" data-scroll-target="#rectangular-hyperbola">Rectangular hyperbola</a></li>
+  <li><a href="#non-rectangular-hyperbola" id="toc-non-rectangular-hyperbola" class="nav-link" data-scroll-target="#non-rectangular-hyperbola">Non rectangular hyperbola</a></li>
+  <li><a href="#fitting-curves-to-experimental-data" id="toc-fitting-curves-to-experimental-data" class="nav-link" data-scroll-target="#fitting-curves-to-experimental-data">Fitting curves to experimental data</a>
+  <ul class="collapse">
+  <li><a href="#definition-of-r-functions" id="toc-definition-of-r-functions" class="nav-link" data-scroll-target="#definition-of-r-functions">Definition of R functions</a></li>
+  <li><a href="#default-parameter-definitions" id="toc-default-parameter-definitions" class="nav-link" data-scroll-target="#default-parameter-definitions">Default parameter definitions</a></li>
+  <li><a href="#example-plot" id="toc-example-plot" class="nav-link" data-scroll-target="#example-plot">Example plot</a></li>
+  <li><a href="#data" id="toc-data" class="nav-link" data-scroll-target="#data">Data</a></li>
+  <li><a href="#fitting-different-response-functions" id="toc-fitting-different-response-functions" class="nav-link" data-scroll-target="#fitting-different-response-functions">Fitting different response functions</a>
+  <ul class="collapse">
+  <li><a href="#fitting-the-blackman-curve" id="toc-fitting-the-blackman-curve" class="nav-link" data-scroll-target="#fitting-the-blackman-curve">Fitting the Blackman curve</a></li>
+  <li><a href="#fitting-rectangular-hyperbola" id="toc-fitting-rectangular-hyperbola" class="nav-link" data-scroll-target="#fitting-rectangular-hyperbola">Fitting Rectangular Hyperbola</a></li>
+  <li><a href="#fitting-negative-exponential-model" id="toc-fitting-negative-exponential-model" class="nav-link" data-scroll-target="#fitting-negative-exponential-model">Fitting negative exponential model</a></li>
+  <li><a href="#fitting-non-rectangular-hyperbola" id="toc-fitting-non-rectangular-hyperbola" class="nav-link" data-scroll-target="#fitting-non-rectangular-hyperbola">Fitting Non-Rectangular Hyperbola</a></li>
+  <li><a href="#comparison-of-models" id="toc-comparison-of-models" class="nav-link" data-scroll-target="#comparison-of-models">Comparison of models</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">PhotosynthesisLight</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="general-equation-form" class="level1">
+<h1>General equation form</h1>
+<p>A general function for the gross photosynthesis rate per Unit Leaf Area as a function of light intensity can be written as:</p>
+<p><span id="eq-general"><span class="math display">\[{P_g}={P_{g,\max }}\cdot f\left( x \right) \tag{1}\]</span></span></p>
+<p>where P<sub>g</sub> = Gross Photosynthesis rate P<sub>g,max</sub> = light saturated photosynthesis rate=f(CO<sub>2</sub>, Temp., N, ..) f(x) = response function (0..1)</p>
+<p>If dark respiration R<sub>d</sub> is added (substracted) on get’s the net photosynthesis rate:</p>
+<p><span id="eq-general_resp"><span class="math display">\[P_n~={P_{g,\max }}\cdot f\left( x \right)-R_d \tag{2}\]</span></span></p>
+<p>where P<sub>n</sub> = Net Photosynthesis rate [µmol CO<sub>2</sub> m<sup>-2</sup> s<sup>-1</sup>] P<sub>g</sub> = Gross Photosynthesis rate P<sub>g,max</sub> = light saturated photosynthesis rate=f(CO<sub>2</sub>, Temp., N, ..) f(x) = response function (0..1) R<sub>d</sub> = dark respiration rate [µmol CO<sub>2</sub> m<sup>-2</sup> s<sup>-1</sup>]</p>
+</section>
+<section id="blackman-response-curve" class="level1">
+<h1>Blackman-Response-Curve</h1>
+<p>The most simple response function thereby is the so called Blackman reponse curve. It is the most simple way to predict the co-limitation of photosynthesis by light energy at the one hand and CO<sub>2</sub>-diffusion into the leaves.</p>
+<p><span id="eq-Blackman"><span class="math display">\[\begin{align}
+  &amp; P_n=\left( \begin{matrix}
+   \alpha I-R_d   \\
+   {{P}_{\max }-R_d}  \\
+\end{matrix}for\,\begin{matrix}
+   I\le {{I}_{crit}}  \\
+   I&gt;{{I}_{crit}}  \\
+\end{matrix} \right. \\
+&amp;  \\
+&amp; {{I}_{crit}}={}^{{{P}_{\max }}}/{}_{\alpha };\,\,\,\,{{\left. \frac{dP}{dI} \right|}_{I&lt;{{I}_{crit}}}}=\alpha  \\
+\end{align} \tag{3}\]</span></span></p>
+<p>where</p>
+<p>I = photosynthetic photon flux density, PPFD (µmol photons m<sup>-2.</sup> s<sup>-1</sup>) <span class="math inline">\(alpha\)</span> = quantum yield, initial slope (µmol CO<sub>2</sub> µmol<sup>-1</sup> photons) P<sub>n</sub>, (P<sub>max</sub>) = (light saturated) CO<sub>2</sub>-assimilation rate (µmol CO<sup>2</sup> m<sup>-2</sup> s<sup>-1</sup>)</p>
+<p>The parameters of the function are easily interpreted but this function form is seldom used for the description of gas exchange data as it describes real data sets not very well.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-BlackmanCurve" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-BlackmanCurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-BlackmanCurve-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-BlackmanCurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Blackman-responce curve for photosynthesis as function of light intensity
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="rectangular-hyperbola" class="level1">
+<h1>Rectangular hyperbola</h1>
+<p>A bit more realistic approach to describe the light response curve of single leaves is the so called rectangular hyperbola:</p>
+<p><span id="eq-rectangular"><span class="math display">\[P_n=\frac{\alpha I {{P}_{\max }}}{\alpha I +{{P}_{\max }}}-R_d \tag{4}\]</span></span></p>
+<p>one should notice that the parameter alpha now describes the light use efficiency at the start of the curve (zero radiation):</p>
+<p><span id="eq-rectangular_slope"><span class="math display">\[{{\left. \frac{dP}{I} \right|}_{I=0}}=\alpha  \tag{5}\]</span></span></p>
+<p>and therefore has a somewhat different meaning as in the Blackman-Response curve.</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-RectangularCurve" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-RectangularCurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-RectangularCurve-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-RectangularCurve-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Rectangular photosynthesis curve
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This equation is analogous to the well known Michaelis-Menten equation often used in enzyme kinetics. It sometimes fails to describe data sets perfectly as photosynthesis often is light saturated earlier than the smooth shape of this curve predicts. A main advantage of this curve is the possibility to integrate it analytically over entire canopy assuming either a constant or a declining value of P<sub>max</sub>. It can be combined with a respiration term (@fig-RectHyperbolicPhotosynthesis, <span class="citation" data-cites="loomis1992">[@loomis1992]</span>)</p>
+<p>The light saturated maximum photosynthesis rate P<sub>max</sub> is given if only CO<sub>2</sub> diffusion into the leaf mesophyll or the leaf chloroplast is limiting photosynthesis. It may be therefore be decoupled into the leaf conductance for CO<sub>2</sub>, g<sub>s</sub> and the concentration difference between the air outside the leaves and the leaf interior:</p>
+<p><span id="eq-Pmax"><span class="math display">\[P_{max}=g_s\Delta CO_2 \tag{6}\]</span></span></p>
+<p>where <span class="math inline">\(\Delta CO_2\)</span> is the difference between the ambient CO<sub>2</sub> concentration and the CO<sub>2</sub> concentration in the leaf interior. The equation can be rewritten to give a more general form of the rectangular hyperbola: This lead to the following equation:</p>
+<p><span id="eq-rectangular_gs"><span class="math display">\[P_{n}^{{}}=\frac{\alpha \,I\,{{g}_{s}}\Delta C}{\alpha \,I+{{g}_{s}}\,\Delta C}-R_d  \tag{7}\]</span></span></p>
+<p>where <span class="math inline">\(\Delta C\)</span> is the difference between the ambient CO<sub>2</sub> concentration and the CO<sub>2</sub> concentration in the leaf interior. This equation can be used to describe the light response of photosynthesis in a more general way. It can be used to describe the effect of changing <span class="math inline">\(CO_2\)</span>-concentrations on photosynthesis. The equation can be rewritten to give a more general form of the rectangular hyperbola:</p>
+<p>which can be used to describe effects of changing <span class="math inline">\(CO_2\)</span>-concentrations on photosynthesis is a very simple manner.</p>
+</section>
+<section id="non-rectangular-hyperbola" class="level1">
+<h1>Non rectangular hyperbola</h1>
+<p>More flexible than the rectangular hyperbola is the non-rectangular hyperbola, which includes an additional parameter <span class="math inline">\(\Theta\)</span> giving more flexibility in smoothing measured data:</p>
+<p><span id="eq-nonrectangular"><span class="math display">\[{{P}^{2}}\Theta -P(\alpha I +{{P}_{\max }})+\alpha I {{P}_{\max }}=0 \tag{8}\]</span></span></p>
+<p>This quadratic equation has two solutions from which only the second with a negative sign before the square root is physiological meaningful:</p>
+<p><span id="eq-nonrectangular2"><span class="math display">\[{{P}_{1,2}}=\frac{(\alpha I +{{P}_{\max }})\pm \sqrt{{{(\alpha I +{{P}_{\max }})}^{2}}-4\Theta \alpha I {{P}_{\max }}}}{2\Theta } \tag{9}\]</span></span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-NonRectHyperbola" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-NonRectHyperbola-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-NonRectHyperbola-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-NonRectHyperbola-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Non-rectangular hyperbola
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Another option to describe the light response of single leaves is the negative exponential function:</p>
+<p><span id="eq-negativeexponential"><span class="math display">\[P_n=P_{max} \left( 1-e^{\frac {\alpha I}{P_{max}}} \right ) \tag{10}\]</span></span></p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div id="fig-NegativeExponential" class="quarto-float quarto-figure quarto-figure-center anchored" data-fig-align="center">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-NegativeExponential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-NegativeExponential-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:80.0%">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-NegativeExponential-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Negative exponential function
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This approach is similar to the non-rectangular hyperbola for values 0.7&lt;theta&lt;0.9. It is/has been use for instance in the well known SUCROS approach of modeling canopy photosynthesis.</p>
+</section>
+<section id="fitting-curves-to-experimental-data" class="level1">
+<h1>Fitting curves to experimental data</h1>
+<p>In the following section data from an publication on photosynthesis measurements on cauliflower () are used to show options for analysing the data with different empirical models of photosynthesis. Therefore R code is used and presented in this document.</p>
+<section id="definition-of-r-functions" class="level2">
+<h2 class="anchored" data-anchor-id="definition-of-r-functions">Definition of R functions</h2>
+<p>In order to fit the different response function we first define theme as R functions:</p>
+</section>
+<section id="default-parameter-definitions" class="level2">
+<h2 class="anchored" data-anchor-id="default-parameter-definitions">Default parameter definitions</h2>
+<p>For the use and fitting of the functions different parameters with their respective values have to be defined:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Definition of a sequence of radiation intensities [µmol/cm2/s]</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>I <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">2000</span>, <span class="dv">10</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Two versions of light saturated photosynthesis rate either in [µg*m-2*s-1] or [µmol*m2-*s-1]</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>Pmax_g <span class="ot">&lt;-</span> <span class="dv">1642</span> <span class="co">#  [µg*m-2*s-1]</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>Pmax_m <span class="ot">&lt;-</span> Pmax_g<span class="sc">/</span>(<span class="dv">12</span><span class="sc">+</span><span class="dv">2</span><span class="sc">*</span><span class="dv">16</span>) <span class="co">#[µmol*m2-*s-1]</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Two versions of initial light use efficiency</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>alpha_Jg <span class="ot">&lt;-</span> <span class="fl">34.9</span> <span class="co"># [µg*J-1]</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>alpha_mol_mol <span class="ot">&lt;-</span>  alpha_Jg<span class="sc">/</span><span class="fl">4.57</span><span class="sc">*</span><span class="dv">1</span><span class="sc">/</span><span class="dv">44</span> <span class="co"># 0.06 more common</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Values of dark respiraton rate</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>r_g <span class="ot">&lt;-</span> <span class="dv">135</span>  <span class="co">#  [µg*m-2*s-1]</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="do">## converstion to molar units using the respective molecular weights</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>r_mol <span class="ot">&lt;-</span> r_g<span class="sc">/</span>(<span class="dv">12</span><span class="sc">+</span><span class="dv">2</span><span class="sc">*</span><span class="dv">16</span>) <span class="co">#[µmol*m2-*s-1]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="example-plot" class="level2">
+<h2 class="anchored" data-anchor-id="example-plot">Example plot</h2>
+<p>Using the rectangular hyperbola and the parameter values defined a simple plot with base r can be produced:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>Pbrutto <span class="ot">&lt;-</span> <span class="fu">RectHyp</span>(Pmax_m, alpha_mol_mol, I)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(I,Pbrutto)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-RectHypExample" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-RectHypExample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-RectHypExample-1.png" id="fig-RectHypExample" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-RectHypExample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="data" class="level2">
+<h2 class="anchored" data-anchor-id="data">Data</h2>
+<p>The data are read in csv-format and we use alternatively units of mol and g within the following sections as the publication of <span class="citation" data-cites="kage2001">[@kage2001]</span> uses weight units and radiation intensity in W<sup>.</sup>m<sup>-2</sup> as it typical for many crop growth models. Alternatively, molar units for radiation (µmol Photons<sup>.</sup>cm<sup>-2.</sup>s<sup>-1</sup>) and CO2-exchange (µmol CO<sub>2</sub><sup>.</sup>cm<sup>-2</sup>.s<sup>-1</sup>) are most often used in crop physiology publications.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### read in data ###########</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># read data from Kage &amp; Stützel ()</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"Cauliflower_Photo_HH_1995_06_01.csv"</span>, <span class="at">header =</span> <span class="cn">TRUE</span> , <span class="at">sep =</span> <span class="st">";"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># correct for chamber size</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>Assi <span class="ot">=</span> dat<span class="sc">$</span>Assi<span class="sc">*</span><span class="fl">3.1</span><span class="sc">/</span><span class="fl">2.5</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># convert assimilation rate into units of g CO2</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>assi_g <span class="ot">=</span> dat<span class="sc">$</span>Assi<span class="sc">*</span><span class="dv">44</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>dat<span class="sc">$</span>par_w <span class="ot">=</span> dat<span class="sc">$</span>PAR<span class="sc">/</span><span class="fl">4.55</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The data set consists of the columns: Plot, Sample, Date, Time, CO2, DiffCO2, PAR, Assi, IntCO2, assi_g, par_w. The units for the numerical columns are:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>Parameters <span class="ot">&lt;-</span> <span class="fu">c</span>( <span class="st">"CO2"</span>,     <span class="st">"DiffCO2"</span>, <span class="st">"PAR"</span>,     <span class="st">"Assi"</span>,    <span class="st">"IntCO2"</span>,  <span class="st">"assi_g"</span>,  <span class="st">"par_w"</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>Units <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"[ppm]"</span>, <span class="st">"[ppm]"</span>, <span class="st">"[µmol Photons.cm-2.s-1]"</span>, <span class="st">"[µmol CO2.cm-2.s-1]"</span>, <span class="st">"[ppm]"</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>           <span class="st">"[µg CO2.cm-2.s-1]"</span>, <span class="st">"[W.cm-2]"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span>  dat <span class="sc">%&gt;%</span> </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(Parameters)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>tmp <span class="ot">&lt;-</span> <span class="fu">as.data.frame</span>(<span class="fu">apply</span>(tmp,<span class="dv">2</span>,summary))</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">#tmp &lt;- tmp %&gt;% tidyr::pivot_wider()</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>minval <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(<span class="fu">as.vector</span>(tmp[<span class="dv">1</span>,])))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>maxval <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(<span class="fu">as.vector</span>(tmp[<span class="dv">6</span>,])))</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>df.def <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(Parameters, <span class="at">Units=</span>Units, <span class="at">min=</span>minval, <span class="at">max=</span>maxval)</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>num_digits <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Format numeric columns using dplyr</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>df.def <span class="ot">&lt;-</span> df.def <span class="sc">%&gt;%</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">signif</span>(.x, <span class="at">digits =</span> num_digits)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(df.def)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Parameters</th>
+<th style="text-align: left;">Units</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">CO2</td>
+<td style="text-align: left;">[ppm]</td>
+<td style="text-align: right;">119.00</td>
+<td style="text-align: right;">707.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DiffCO2</td>
+<td style="text-align: left;">[ppm]</td>
+<td style="text-align: right;">-116.00</td>
+<td style="text-align: right;">10.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PAR</td>
+<td style="text-align: left;">[µmol Photons.cm-2.s-1]</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">1900.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Assi</td>
+<td style="text-align: left;">[µmol CO2.cm-2.s-1]</td>
+<td style="text-align: right;">-5.58</td>
+<td style="text-align: right;">57.8</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">IntCO2</td>
+<td style="text-align: left;">[ppm]</td>
+<td style="text-align: right;">91.00</td>
+<td style="text-align: right;">705.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">assi_g</td>
+<td style="text-align: left;">[µg CO2.cm-2.s-1]</td>
+<td style="text-align: right;">-246.00</td>
+<td style="text-align: right;">2540.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">par_w</td>
+<td style="text-align: left;">[W.cm-2]</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: right;">418.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This means that the columns assi_g and par_w are giving the assimilation rate and the radiation intensity in units of weight and energy.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the number of significant digits</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>num_digits <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Format numeric columns using dplyr</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> dat <span class="sc">%&gt;%</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">signif</span>(.x, <span class="at">digits =</span> num_digits)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make nice table using kable </span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="fu">head</span>(df))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 8%">
+<col style="width: 5%">
+<col style="width: 11%">
+<col style="width: 7%">
+<col style="width: 8%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Plot</th>
+<th style="text-align: right;">Sample</th>
+<th style="text-align: left;">Date</th>
+<th style="text-align: left;">Time</th>
+<th style="text-align: right;">CO2</th>
+<th style="text-align: right;">DiffCO2</th>
+<th style="text-align: right;">PAR</th>
+<th style="text-align: right;">Assi</th>
+<th style="text-align: right;">IntCO2</th>
+<th style="text-align: right;">assi_g</th>
+<th style="text-align: right;">par_w</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:41</td>
+<td style="text-align: right;">145</td>
+<td style="text-align: right;">-28.0</td>
+<td style="text-align: right;">1040</td>
+<td style="text-align: right;">14.00</td>
+<td style="text-align: right;">104</td>
+<td style="text-align: right;">617</td>
+<td style="text-align: right;">229.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:42</td>
+<td style="text-align: right;">139</td>
+<td style="text-align: right;">-25.0</td>
+<td style="text-align: right;">750</td>
+<td style="text-align: right;">12.30</td>
+<td style="text-align: right;">102</td>
+<td style="text-align: right;">540</td>
+<td style="text-align: right;">165.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:44</td>
+<td style="text-align: right;">126</td>
+<td style="text-align: right;">-23.8</td>
+<td style="text-align: right;">490</td>
+<td style="text-align: right;">11.80</td>
+<td style="text-align: right;">91</td>
+<td style="text-align: right;">518</td>
+<td style="text-align: right;">108.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:45</td>
+<td style="text-align: right;">124</td>
+<td style="text-align: right;">-19.1</td>
+<td style="text-align: right;">310</td>
+<td style="text-align: right;">9.55</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">420</td>
+<td style="text-align: right;">68.1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:45</td>
+<td style="text-align: right;">122</td>
+<td style="text-align: right;">-18.1</td>
+<td style="text-align: right;">240</td>
+<td style="text-align: right;">8.80</td>
+<td style="text-align: right;">96</td>
+<td style="text-align: right;">387</td>
+<td style="text-align: right;">52.7</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">02. Jun</td>
+<td style="text-align: left;">08:46</td>
+<td style="text-align: right;">121</td>
+<td style="text-align: right;">-16.3</td>
+<td style="text-align: right;">180</td>
+<td style="text-align: right;">8.06</td>
+<td style="text-align: right;">97</td>
+<td style="text-align: right;">355</td>
+<td style="text-align: right;">39.6</td>
+</tr>
+</tbody>
+</table>
+<p>Photosynthesis data from Kage &amp; Stützel (2001)</p>
+</div>
+</div>
+<p>From this data set we filter out the observations using recent level of CO<sub>2</sub> concentration at approximately 400 ppm and make a simple plot using base R.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># select the rows with approx 400 ppm CO2</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>dat400 <span class="ot">&lt;-</span> dat[<span class="dv">48</span><span class="sc">:</span><span class="dv">55</span>,]</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># add the value of dark respiration at zeor irradtiation to obtain gross assimilation</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>dat400<span class="sc">$</span>Pbrutto <span class="ot">&lt;-</span> dat400<span class="sc">$</span>Assi<span class="sc">-</span><span class="fu">min</span>(dat400<span class="sc">$</span>Assi)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="do">#### simple scatter plot</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> dat400<span class="sc">$</span>PAR, <span class="at">y =</span> dat400<span class="sc">$</span>Pbrutto)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ExampleData" class="quarto-float quarto-figure quarto-figure-center anchored" width="672">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ExampleData-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-ExampleData-1.png" id="fig-ExampleData" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig quarto-uncaptioned" id="fig-ExampleData-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;6
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-different-response-functions" class="level2">
+<h2 class="anchored" data-anchor-id="fitting-different-response-functions">Fitting different response functions</h2>
+<p>We can now fit different response curves to the data of measured gross photosynthesis at different radiation intensities and the selected CO<sub>2</sub> concentration of around 400 ppm. For this purpose we use the R function nls which is able to fit non-linear functions to data using different search algorithms. It is crucial for this process, that realistic start values are given to the function.</p>
+<section id="fitting-the-blackman-curve" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-the-blackman-curve">Fitting the Blackman curve</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="do">######## fitting Blackman curve #########</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># estimates for initial parameter values</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>dat_save <span class="ot">&lt;-</span> dat</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>dat <span class="ot">&lt;-</span> dat400</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># estimation of start values for the parameters Pmax and alpha</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="do">## start with a value slightly below maximum</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>iPmax <span class="ot">&lt;-</span> <span class="fl">0.9</span><span class="sc">*</span><span class="fu">max</span>(dat<span class="sc">$</span>Pbrutto)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="do">## derive the slope by selecting the first radiation intensity higher than zero</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>islope <span class="ot">&lt;-</span> dat[dat<span class="sc">$</span>PAR<span class="sc">==</span><span class="dv">180</span>, <span class="st">"Pbrutto"</span>]<span class="sc">/</span><span class="dv">180</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co"># fitting the Blackman function to experimental data using nls</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>mod.Blackman <span class="ot">&lt;-</span>  <span class="fu">nls</span>(Pbrutto <span class="sc">~</span> <span class="fu">Blackman</span>(Pmax, alpha, PAR), <span class="at">data=</span>dat, </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>               <span class="at">start =</span> <span class="fu">list</span>(<span class="at">alpha=</span>islope, <span class="at">Pmax=</span>iPmax), <span class="fu">nls.control</span>(<span class="at">warnOnly=</span><span class="cn">TRUE</span>))</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># r2 is not well defined for non-linear models but a hand calculation is made here</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>RSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(mod.Blackman)<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Residual sum of squares</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>TSS <span class="ot">&lt;-</span> <span class="fu">sum</span>((dat<span class="sc">$</span>Pbrutto <span class="sc">-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>Pbrutto))<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Total sum of squares</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>rsquared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (RSS<span class="sc">/</span>TSS)</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.Blackman)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formula: Pbrutto ~ Blackman(Pmax, alpha, PAR)</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters:</span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alpha  0.081629   0.006651   12.27 1.78e-05 ***</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pmax  32.240000   1.434605   22.47 5.08e-07 ***</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 2.869 on 6 degrees of freedom</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of iterations to convergence: 1 </span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Achieved convergence tolerance: 6.347e-09</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"Rsquare: "</span>, <span class="fu">as.character</span>(<span class="fu">format</span>(rsquared, <span class="at">digits =</span> <span class="dv">3</span>))))</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Rsquare:  0.946</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The output of the model summary gives the parameter estimates and we added the calculated value of the “pseudo” r-square. The latter is quite high, but the next plot shows that the data are not to well described by the Blackman model.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieving the coefficients from the summary</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">summary</span>(mod.Blackman)<span class="sc">$</span>coefficients[<span class="dv">1</span>]</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>Pmax <span class="ot">&lt;-</span>  <span class="fu">summary</span>(mod.Blackman)<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">#calculation of the break point</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>Iopt <span class="ot">&lt;-</span> Pmax<span class="sc">/</span>alpha</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>minPAR <span class="ot">&lt;-</span> <span class="fu">min</span>(dat<span class="sc">$</span>PAR) <span class="co">#Minimum-PAR</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>maxPAR <span class="ot">&lt;-</span> <span class="fu">max</span>(dat<span class="sc">$</span>PAR) <span class="co">#Maximum-PAR</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="co"># calculate two sequences of PAR-values </span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>PARvalues1 <span class="ot">&lt;-</span> <span class="fu">seq</span>(minPAR, Iopt, (Iopt<span class="sc">-</span>minPAR)<span class="sc">/</span><span class="dv">19</span>)</span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>PARvalues2 <span class="ot">&lt;-</span> <span class="fu">seq</span>(Iopt, maxPAR, Iopt<span class="sc">/</span><span class="dv">19</span>)</span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>PARvalues <span class="ot">&lt;-</span> <span class="fu">c</span>(PARvalues1, PARvalues2)</span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="co"># use the generic predict function to obtain estimates for the defined values of PAR</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>Yval_mod.Blackman <span class="ot">&lt;-</span>  <span class="fu">predict</span>(mod.Blackman, <span class="fu">list</span>(<span class="at">PAR=</span>PARvalues))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use basic plot</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> dat<span class="sc">$</span>PAR, <span class="at">y =</span> dat<span class="sc">$</span>Pbrutto)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.Blackman)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-BlackmanFitting" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-BlackmanFitting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-BlackmanFitting-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-BlackmanFitting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;7: Blackman response curve fit to the data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-rectangular-hyperbola" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-rectangular-hyperbola">Fitting Rectangular Hyperbola</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="do">########## Fitting Rectangular Hyperbola ##################</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use function nls to fit the values, important are realistic start values</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>mod.RectHyp <span class="ot">&lt;-</span>  <span class="fu">nls</span>(Pbrutto <span class="sc">~</span> <span class="fu">RectHyp</span>(Pmax, alpha, PAR), <span class="at">data=</span>dat, </span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">start =</span> <span class="fu">list</span>(<span class="at">alpha=</span>islope, <span class="at">Pmax=</span>iPmax), <span class="fu">nls.control</span>(<span class="at">warnOnly=</span><span class="cn">TRUE</span>, <span class="at">minFactor =</span> <span class="fl">1e-10</span>) )</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co"># r2 is not well defined for non-linear models but a hand calculation is made here</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>RSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(mod.RectHyp)<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Residual sum of squares</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>TSS <span class="ot">&lt;-</span> <span class="fu">sum</span>((dat<span class="sc">$</span>Pbrutto <span class="sc">-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>Pbrutto))<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Total sum of squares</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>rsquared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (RSS<span class="sc">/</span>TSS)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.RectHyp)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formula: Pbrutto ~ RectHyp(Pmax, alpha, PAR)</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters:</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;       Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alpha   0.1822     0.0107   17.03 2.62e-06 ***</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pmax   40.1805     0.9143   43.95 9.30e-09 ***</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 0.7944 on 6 degrees of freedom</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of iterations to convergence: 4 </span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Achieved convergence tolerance: 5.855e-07</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"rsquare: "</span>, <span class="fu">as.character</span>(<span class="fu">format</span>(rsquared, <span class="at">digits =</span> <span class="dv">3</span>))))</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rsquare:  0.996</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieving the coefficients from the summary</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">summary</span>(mod.RectHyp)<span class="sc">$</span>coefficients[<span class="dv">1</span>]</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>Pmax <span class="ot">&lt;-</span>  <span class="fu">summary</span>(mod.RectHyp)<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#calculation of the break point</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>minPAR <span class="ot">&lt;-</span> <span class="fu">min</span>(dat<span class="sc">$</span>PAR) <span class="co">#Minimum-PAR</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>maxPAR <span class="ot">&lt;-</span> <span class="fu">max</span>(dat<span class="sc">$</span>PAR) <span class="co">#Maximum-PAR</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">#PARvalues &lt;- seq(minPAR, maxPAR, (maxPAR-minPAR)/19)</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>Yval_mod.RectHyp <span class="ot">&lt;-</span>  <span class="fu">predict</span>(mod.RectHyp, <span class="fu">list</span>(<span class="at">PAR=</span>PARvalues))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> dat<span class="sc">$</span>PAR, <span class="at">y =</span> dat<span class="sc">$</span>Pbrutto)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.RectHyp)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-RectHypFitting" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-RectHypFitting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-RectHypFitting-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-RectHypFitting-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;8: Rectangular hyperbola fit to the data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="fitting-negative-exponential-model" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-negative-exponential-model">Fitting negative exponential model</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="do">######## negative exponential ##############</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>islope <span class="ot">&lt;-</span> <span class="fl">0.01</span><span class="sc">*</span>alpha</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>mod.negExpo <span class="ot">&lt;-</span>  <span class="fu">nls</span>(Pbrutto <span class="sc">~</span> <span class="fu">NegExponential</span>(Pmax, alpha, PAR), <span class="at">data=</span>dat, </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>               <span class="at">start =</span> <span class="fu">list</span>(<span class="at">alpha=</span>islope, <span class="at">Pmax=</span><span class="dv">2</span><span class="sc">*</span>Pmax), <span class="fu">nls.control</span>(<span class="at">warnOnly=</span><span class="cn">TRUE</span>, <span class="at">minFactor =</span> <span class="fl">1e-10</span>) )</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a><span class="co"># r2 is not well defined for non-linear models but a hand calculation is made here</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>RSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(mod.negExpo)<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Residual sum of squares</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>TSS <span class="ot">&lt;-</span> <span class="fu">sum</span>((dat<span class="sc">$</span>Pbrutto <span class="sc">-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>Pbrutto))<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Total sum of squares</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>rsquared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (RSS<span class="sc">/</span>TSS)</span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.negExpo)</span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formula: Pbrutto ~ NegExponential(Pmax, alpha, PAR)</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters:</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;        Estimate Std. Error t value Pr(&gt;|t|)    </span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alpha  0.003726   0.000212   17.57 2.18e-06 ***</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Pmax  34.396628   0.649313   52.97 3.04e-09 ***</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ---</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 0.9407 on 6 degrees of freedom</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of iterations to convergence: 6 </span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Achieved convergence tolerance: 3.132e-06</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fitting-non-rectangular-hyperbola" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-non-rectangular-hyperbola">Fitting Non-Rectangular Hyperbola</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="do">########## Fitting Rectangular Hyperbola ##################</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># use function nls to fit the values, important are realistic start values</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>mod.NonRectHyp <span class="ot">&lt;-</span>  <span class="fu">nls</span>(Pbrutto <span class="sc">~</span> <span class="fu">NonRectHyp</span>(alpha, pmax, theta, PAR), <span class="at">data=</span>dat, </span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">start =</span> <span class="fu">list</span>(<span class="at">alpha=</span><span class="fl">0.02</span>, <span class="at">pmax=</span><span class="dv">40</span>, <span class="at">theta=</span><span class="fl">0.8</span>), <span class="fu">nls.control</span>(<span class="at">warnOnly=</span><span class="cn">TRUE</span>, <span class="at">minFactor =</span> <span class="fl">1e-10</span>) )</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># r2 is not well defined for non-linear models but a hand calculation is made here</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>RSS <span class="ot">&lt;-</span> <span class="fu">sum</span>(<span class="fu">residuals</span>(mod.NonRectHyp)<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Residual sum of squares</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>TSS <span class="ot">&lt;-</span> <span class="fu">sum</span>((dat<span class="sc">$</span>Pbrutto <span class="sc">-</span> <span class="fu">mean</span>(dat<span class="sc">$</span>Pbrutto))<span class="sc">^</span><span class="dv">2</span>)  <span class="co"># Total sum of squares</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>rsquared <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">-</span> (RSS<span class="sc">/</span>TSS)</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod.NonRectHyp)</span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Formula: Pbrutto ~ NonRectHyp(alpha, pmax, theta, PAR)</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Parameters:</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;         Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; alpha  3.613e+01  1.116e+04   0.003    0.998</span></span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; pmax  -3.205e+08  7.127e+15   0.000    1.000</span></span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; theta -2.085e+07  4.635e+14   0.000    1.000</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Residual standard error: 16330 on 5 degrees of freedom</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; </span></span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Number of iterations till stop: 1 </span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Achieved convergence tolerance: 5.518</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Reason stopped: singulärer Gradient</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a><span class="fu">cat</span>(<span class="fu">paste</span>(<span class="st">"rsquare: "</span>, <span class="fu">as.character</span>(<span class="fu">format</span>(rsquared, <span class="at">digits =</span> <span class="dv">3</span>))))</span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; rsquare:  -1451202</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="comparison-of-models" class="level3">
+<h3 class="anchored" data-anchor-id="comparison-of-models">Comparison of models</h3>
+<p>The models</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co"># retrieving the coefficients from the summary</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>alpha <span class="ot">&lt;-</span> <span class="fu">summary</span>(mod.negExpo)<span class="sc">$</span>coefficients[<span class="dv">1</span>]</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>Pmax <span class="ot">&lt;-</span>  <span class="fu">summary</span>(mod.negExpo)<span class="sc">$</span>coefficients[<span class="dv">2</span>]</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">#calculation of the break point</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>minPAR <span class="ot">&lt;-</span> <span class="fu">min</span>(dat<span class="sc">$</span>PAR) <span class="co">#Minimum-PAR</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>maxPAR <span class="ot">&lt;-</span> <span class="fu">max</span>(dat<span class="sc">$</span>PAR) <span class="co">#Maximum-PAR</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">#PARvalues &lt;- seq(minPAR, maxPAR, (maxPAR-minPAR)/19)</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>Yval_mod.negExpo <span class="ot">&lt;-</span>  <span class="fu">predict</span>(mod.negExpo, <span class="fu">list</span>(<span class="at">PAR=</span>PARvalues))</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>Yval_mod.NonRectHyp <span class="ot">&lt;-</span>  <span class="fu">predict</span>(mod.NonRectHyp, <span class="fu">list</span>(<span class="at">PAR=</span>PARvalues))</span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="at">x =</span> dat<span class="sc">$</span>PAR, <span class="at">y =</span> dat<span class="sc">$</span>Pbrutto, <span class="at">xlab=</span><span class="st">"PAR (µmol . cm-2. s-1)"</span>,</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab=</span><span class="st">"Assimilation (µmol cm-2.s-1)"</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.Blackman, <span class="at">col=</span><span class="st">"blue"</span>)</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.RectHyp, <span class="at">col=</span><span class="st">"red"</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.NonRectHyp, <span class="at">col=</span><span class="st">"pink"</span>, <span class="at">linewidth=</span><span class="dv">2</span>)</span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="at">x =</span> PARvalues, <span class="at">y =</span> Yval_mod.negExpo, <span class="at">col=</span><span class="st">"green"</span>)</span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="do">###########################################</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div id="fig-ModelComparison" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-ModelComparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="PhotosynthesisLight_files/figure-html/fig-ModelComparison-1.png" class="img-fluid figure-img" width="672">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-ModelComparison-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;9: Comparison of different models fitted to the data
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

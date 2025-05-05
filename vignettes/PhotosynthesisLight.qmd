@@ -98,10 +98,6 @@ plot.model <- function(Pmax=20, alpha=0.08, r=3, theta=0.7, model="Rectangular",
 
 #plot.model(Pmax = 20, alpha = 0.02, r = 3, theta = 0.7, model = "NonRectHypR")
 
-
-
-
-
 ```
 
 # General equation form
