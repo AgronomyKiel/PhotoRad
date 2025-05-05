@@ -1,5 +1,5 @@
 Package: PhotoRad
-Title: Functions for calculation of radiation and photosynthesis in leaf canopies
+Title: Photosynthesis and radiation in crop canopies: Functions for calculation of radiation and photosynthesis in leaf canopies
 Version: 0.0.0.9000
 Authors@R: 
     person("Henning", "Kage", , "kage@pflanzenbau.uni-kiel.de", role = c("aut", "cre"))
@@ -8,3 +8,5 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
+VignetteBuilder: 
+    quarto
